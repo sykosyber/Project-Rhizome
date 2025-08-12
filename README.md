@@ -1,5 +1,6 @@
 # Project Rhizome: User Guide
 
+![Project Rhizome Preview](https://i.imgur.com/1qevIZh.png)
 ## What is Project Rhizome?
 
 Project Rhizome is a digital tool for cognitive flexibility: 
