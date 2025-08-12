@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Rhizome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f7f5f3 0%, #f0ede8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3a3a3a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 90%;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rhizome-animation {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            opacity: 0.3;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c5530;
+            font-weight: normal;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #2c5530;
+            font-weight: 500;
+        }
+
+        .step-number {
+            display: block;
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .example-section {
+            background: rgba(44, 85, 48, 0.05);
+            border-left: 3px solid #2c5530;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+
+        .example-title {
+            font-weight: 600;
+            color: #2c5530;
+            margin-bottom: 8px;
+        }
+
+        .example-text {
+            color: #555;
+            font-style: italic;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 20px;
+            border: 2px solid #e0ddd7;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.9);
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2c5530;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background: #2c5530;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background: #3a6b3f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 85, 48, 0.3);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0ddd7;
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2c5530, #4a7c59);
+            border-radius: 2px;
+            transition: width 0.8s ease;
+            width: 0%;
+        }
+
+        .synthesis {
+            padding: 30px 0;
+        }
+
+        .synthesis-item {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 15px;
+            border-left: 4px solid #2c5530;
+        }
+
+        .synthesis-title {
+            font-size: 1.2em;
+            color: #2c5530;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .synthesis-content {
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        .original-thought {
+            background: rgba(44, 85, 48, 0.1);
+            border-left-color: #2c5530;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            background: transparent;
+            color: #666;
+            border: 2px solid #e0ddd7;
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        .nav-button:hover {
+            background: #f0ede8;
+            border-color: #2c5530;
+            color: #2c5530;
+        }
+
+        /* Replace the old .save-indicator rule with this one */
+        .save-indicator {
+            position: fixed; /* This is the key change */
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%); /* This horizontally centers the element */
+            background: #2c5530;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Ensures it appears on top of other content */
+            opacity: 0;
+            pointer-events: none; /* Prevents clicking the indicator itself */
+            transition: all 0.4s ease-in-out;
+        }
+
+        /* Replace the old .save-indicator.show rule with this one for a smoother animation */
+        .save-indicator.show {
+            opacity: 1;
+            top: 30px; /* Animate it dropping down slightly */
+        }
+
+        .intensity-tracker {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .intensity-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .intensity-slider {
+            width: 200px;
+            height: 6px;
+            background: #e0ddd7;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .intensity-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #2c5530;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .intensity-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #2c5530;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .intensity-values {
+            display: flex;
+            justify-content: space-between;
+            width: 200px;
+            margin: 5px auto 0;
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .emergence-prompt {
+            background: rgba(74, 124, 89, 0.05);
+            border: 1px dashed #4a7c59;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            font-style: italic;
+            color: #4a7c59;
+        }
+
+        .metacognitive-note {
+            background: rgba(255, 248, 220, 0.8);
+            border-left: 3px solid #deb887;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #8b6914;
+        }
+
+        .entry-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .entry-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid #e0ddd7;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .entry-card:hover {
+            border-color: #2c5530;
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .entry-card.selected {
+            border-color: #2c5530;
+            background: rgba(44, 85, 48, 0.05);
+        }
+
+        .entry-card-title {
+            font-weight: 600;
+            color: #2c5530;
+            margin-bottom: 8px;
+        }
+
+        .entry-card-desc {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .journey-history {
+            margin-top: 30px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid #e0ddd7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: #2c5530;
+        }
+
+        .history-date {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .history-thought {
+            font-weight: 500;
+            color: #3a3a3a;
+        }
+
+        .accessibility-controls {
+            position: absolute;
+            top: 20px;
+            left: 120px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .accessibility-button {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .accessibility-button:hover {
+            background: #2c5530;
+            color: white;
+        }
+
+        .high-contrast {
+            background: #000 !important;
+            color: #fff !important;
+        }
+
+        .high-contrast .container {
+            background: #333 !important;
+            color: #fff !important;
+        }
+
+        .high-contrast button {
+            background: #fff !important;
+            color: #000 !important;
+        }
+    #clearHistoryBtn {
+        border-color: #c9a9a9;
+        color: #a14d4d;
+    }
+
+    #clearHistoryBtn:hover {
+        background: #fbeeee;
+        border-color: #a14d4d;
+        color: #a14d4d;
+    }
+        .pause-reminder {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 240, 245, 0.8);
+            border-radius: 10px;
+            color: #8b4b61;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .question {
+                font-size: 1.1em;
+            }
+            
+            .entry-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .accessibility-controls {
+                position: relative;
+                top: auto;
+                left: auto;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="save-indicator" id="saveIndicator">Progress saved</div>
+        
+        <div class="accessibility-controls">
+            <button class="accessibility-button" onclick="toggleContrast()" title="High Contrast">◐</button>
+            <button class="accessibility-button" onclick="adjustFontSize()" title="Larger Text">A+</button>
+        </div>
+        
+        <svg class="rhizome-animation" viewBox="0 0 100 100">
+            <g id="rhizomeGrowth" stroke="#2c5530" stroke-width="1.5" fill="none" opacity="0.4">
+                <!-- Animated growing rhizome structure -->
+            </g>
+        </svg>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Step 0: Entry Point Selection -->
+        <div class="step active" id="step0">
+            <h1>Project Rhizome</h1>
+            <p class="subtitle">A space for cognitive flexibility and new pathways</p>
+            
+            <p class="question">How would you like to begin your journey?</p>
+            
+            <div class="entry-options">
+                <div class="entry-card" onclick="selectEntry('thought', event)">
+                    <div class="entry-card-title">A Persistent Thought</div>
+                    <div class="entry-card-desc">Something that keeps circling in your mind</div>
+                </div>
+                <div class="entry-card" onclick="selectEntry('feeling', event)">
+                    <div class="entry-card-title">A Stuck Feeling</div>
+                    <div class="entry-card-desc">An emotion that feels unchangeable</div>
+                </div>
+                <div class="entry-card" onclick="selectEntry('belief', event)">
+                    <div class="entry-card-title">A Limiting Belief</div>
+                    <div class="entry-card-desc">Something you assume to be true about yourself or the world</div>
+                </div>
+                <div class="entry-card" onclick="selectEntry('pattern', event)">
+                    <div class="entry-card-title">A Recurring Pattern</div>
+                    <div class="entry-card-desc">A way of thinking or acting that keeps repeating</div>
+                </div>
+                <div class="entry-card" onclick="selectEntry('sensation', event)">
+                    <div class="entry-card-title">A Physical Sensation</div>
+                    <div class="entry-card-desc">A knot in your stomach, tension in your shoulders, or other persistent bodily feeling.</div>
+                </div>
+                <div class="entry-card" onclick="selectEntry('dynamic', event)">
+                    <div class="entry-card-title">A Relationship Dynamic</div>
+                    <div class="entry-card-desc">An ongoing pattern, unresolved tension, or difficult loop in how you relate to someone.</div>
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button onclick="nextStep()" id="step0Button" disabled>Continue</button>
+                <button class="nav-button" onclick="viewHistory()" style="margin-left: 15px;">View History</button>
+            </div>
+        </div>
+
+        <!-- Step 1: The Invitation -->
+        <div class="step" id="step1">
+            <span class="step-number">Beginning Your Journey</span>
+            <p class="question" id="entryQuestion">What fixed idea or troubling thought is holding your attention?</p>
+            
+            <div class="example-section">
+                <div class="example-title">Examples might include:</div>
+                <div class="example-text" id="exampleText">"I'm not good enough for this job" • "They don't really care about me" • "I always mess things up"</div>
+            </div>
+            
+            <div class="intensity-tracker">
+                <div class="intensity-label">How intense does this feel right now?</div>
+                <input type="range" class="intensity-slider" id="intensityBefore" min="1" max="10" value="5">
+                <div class="intensity-values">
+                    <span>Mild</span>
+                    <span>Intense</span>
+                </div>
+            </div>
+            
+            <textarea id="originalThought" placeholder="Write freely about what feels stuck or persistent..."></textarea>
+            
+            <div class="pause-reminder">
+                Remember: This is a space for exploration. You can pause anytime.
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()" id="step1Button" disabled>Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 2: The Assemblage -->
+        <div class="step" id="step2">
+            <span class="step-number">Step 1 of 3: Assemblage</span>
+            <div class="synthesis-item original-thought">
+                <div class="synthesis-title">Your Starting Point</div>
+                <div class="synthesis-content" id="thoughtDisplay"></div>
+            </div>
+            
+            <p class="question">What multiple, even contradictory, functions does this serve right now?</p>
+            
+            <div class="example-section">
+                <div class="example-title">Different roles thoughts can play:</div>
+                <div class="example-text">Protector (keeps me safe) • Motivator (pushes me to try harder) • Organizer (makes sense of chaos) • Connector (links me to others) • Controller (gives me agency)</div>
+            </div>
+            
+            <textarea id="assemblage" placeholder="Explore the different roles this might be playing in your life..."></textarea>
+            
+            <div class="emergence-prompt">
+                What else wants to be thought about this? What's emerging as you write?
+            </div>
+            
+            <div class="metacognitive-note">
+                Notice: How does it feel to think about your thought serving multiple purposes rather than just being "true" or "false"?
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()" id="step2Button" disabled>Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Multiplicities -->
+        <div class="step" id="step3">
+            <span class="step-number">Step 2 of 3: Multiplicities</span>
+            <p class="question">How can this be both true and not true at the same time?</p>
+            
+            <div class="example-section">
+                <div class="example-title">Consider different contexts:</div>
+                <div class="example-text">True in the past, less true now • True at work, false at home • True from one perspective, false from another • True sometimes, false other times</div>
+            </div>
+            
+            <textarea id="multiplicities" placeholder="Explore the paradoxes and contradictions within this..."></textarea>
+            
+            <div class="emergence-prompt">
+                What's shifting in your understanding as you explore these contradictions?
+            </div>
+            
+            <div class="metacognitive-note">
+                Notice: How does it feel to hold contradictory truths about the same thought? What happens in your body when you do this?
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()" id="step3Button" disabled>Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Lines of Flight -->
+        <div class="step" id="step4">
+            <span class="step-number">Step 3 of 3: Lines of Flight</span>
+            <p class="question">Given all this complexity, what new possibilities become available?</p>
+            
+            <div class="example-section">
+                <div class="example-title">New pathways might include:</div>
+                <div class="example-text">Different questions to ask • New actions to try • Ways to hold the thought more lightly • Experiments to run • Conversations to have</div>
+            </div>
+            
+            <textarea id="linesOfFlight" placeholder="What new possibilities emerge from this exploration?"></textarea>
+            
+            <div class="emergence-prompt">
+                What would you be curious to explore if this thought weren't fixed in place?
+            </div>
+            
+            <div class="metacognitive-note">
+                Notice: What's different about how you're relating to the original thought now versus when you started?
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()" id="step4Button" disabled>Complete Journey</button>
+            </div>
+        </div>
+
+        <!-- Step 5: The Synthesis -->
+        <div class="step" id="step5">
+            <h1>Your Cognitive Journey</h1>
+            <p class="subtitle">From fixed thought to flexible possibilities</p>
+            
+            <div class="intensity-tracker">
+                <div class="intensity-label">How intense does this feel now?</div>
+                <input type="range" class="intensity-slider" id="intensityAfter" min="1" max="10" value="5">
+                <div class="intensity-values">
+                    <span>Mild</span>
+                    <span>Intense</span>
+                </div>
+            </div>
+            
+            <div class="synthesis">
+                <div class="synthesis-item original-thought">
+                    <div class="synthesis-title">Original Starting Point</div>
+                    <div class="synthesis-content" id="finalOriginalThought"></div>
+                </div>
+
+                <div class="synthesis-item">
+                    <div class="synthesis-title">Assemblage: Multiple Functions</div>
+                    <div class="synthesis-content" id="finalAssemblage"></div>
+                </div>
+
+                <div class="synthesis-item">
+                    <div class="synthesis-title">Multiplicities: Paradoxes Explored</div>
+                    <div class="synthesis-content" id="finalMultiplicities"></div>
+                </div>
+
+                <div class="synthesis-item">
+                    <div class="synthesis-title">Lines of Flight: New Possibilities</div>
+                    <div class="synthesis-content" id="finalLinesOfFlight"></div>
+                </div>
+            </div>
+
+            <div class="metacognitive-note">
+                    Integration Question: Which of these new possibilities feels most alive or interesting to you right now?
+                </div>
+
+                <div class="button-container" id="synthesisButtons">
+                    <button onclick="saveJourney(this)">Save This Journey</button>
+                    <button class="nav-button" onclick="exportJourney()" style="margin-left: 15px;">Export</button>
+                    <button class="nav-button" onclick="startOver()" style="margin-left: 15px;">New Journey</button>
+                </div>
+                <div class="button-container" id="historyViewButtons" style="display: none;"></div>
+            </div>
+
+        <!-- Step 6: Journey History -->
+        <div class="step" id="step6">
+            <h1>Your Journey History</h1>
+            <p class="subtitle">Patterns and insights across your explorations</p>
+            
+            <div class="journey-history" id="journeyHistory">
+                <!-- Journey history will be populated here -->
+            </div>
+            
+            <div class="button-container">
+                <button onclick="startOver()">Begin New Journey</button>
+                <button class="nav-button" onclick="exportAllJourneys()" style="margin-left: 15px;">Export All</button>
+                <button class="nav-button" id="clearHistoryBtn" onclick="clearHistory()" style="margin-left: 15px;">Clear All History</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let selectedEntry = '';
+        const totalSteps = 6;
+        let fontSize = 1;
+        
+        const entryPrompts = {
+            thought: {
+                question: "What persistent thought keeps circling in your mind?",
+                examples: '"I\'m not good enough" • "They don\'t care about me" • "I always mess things up"',
+                placeholder: "Describe the thought that feels stuck or repetitive..."
+            },
+            feeling: {
+                question: "What feeling seems stuck or unchangeable right now?",
+                examples: '"I feel hopeless" • "I\'m always anxious" • "I can\'t shake this sadness"',
+                placeholder: "Describe the feeling that feels fixed in place..."
+            },
+            belief: {
+                question: "What belief about yourself or the world feels limiting?",
+                examples: '"I\'m not creative" • "People can\'t be trusted" • "Success requires sacrifice"',
+                placeholder: "Describe the belief that might be constraining you..."
+            },
+            pattern: {
+                question: "What pattern of thinking or acting keeps repeating?",
+                examples: '"I always overthink decisions" • "I avoid difficult conversations" • "I put others first"',
+                placeholder: "Describe the pattern you notice repeating..."
+            },
+            sensation: {
+                question: "What physical sensation in your body feels persistent or charged?",
+                examples: '"A tightness in my chest" • "A buzzing in my hands" • "A hollow feeling in my gut"',
+                placeholder: "Describe the sensation—where it is, what it feels like (e.g., sharp, dull, hot, cold, heavy)..."
+            },
+            dynamic: {
+                question: "What relationship dynamic is causing difficulty or feels stuck?",
+                examples: '"I always feel I have to please them" • "We have the same argument over and over" • "I feel unheard with this person"',
+                placeholder: "Describe the pattern of interaction. What happens? How do you feel?"
+            }
+        };
+        
+        // Initialize rhizome animation
+        function initRhizome() {
+            const svg = document.getElementById('rhizomeGrowth');
+            const paths = [
+                'M20,50 Q40,30 60,50',
+                'M60,50 Q80,70 90,50',
+                'M40,30 Q30,20 50,10',
+                'M60,50 Q70,30 85,35',
+                'M30,70 Q50,80 70,75'
+            ];
+            
+            paths.forEach((path, index) => {
+                const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                pathEl.setAttribute('d', path);
+                pathEl.style.strokeDasharray = '100';
+                pathEl.style.strokeDashoffset = '100';
+                pathEl.style.animation = `grow 2s ease-in-out ${index * 0.3}s forwards`;
+                svg.appendChild(pathEl);
+            });
+        }
+
+        // Add CSS for rhizome growth animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes grow {
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Load saved data on page load
+        window.addEventListener('load', () => {
+            loadSavedData();
+            initRhizome();
+            updateProgress();
+            loadJourneyHistory();
+        });
+
+        function selectEntry(type, event) {
+            selectedEntry = type;
+            document.querySelectorAll('.entry-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.entry-card').classList.add('selected');
+            document.getElementById('step0Button').disabled = false;
+            
+            // Update step 1 with selected entry type
+            const prompt = entryPrompts[type];
+            document.getElementById('entryQuestion').textContent = prompt.question;
+            document.getElementById('exampleText').textContent = prompt.examples;
+            document.getElementById('originalThought').placeholder = prompt.placeholder;
+        }
+
+        // Save data to memory (localStorage replacement)
+        function saveData() {
+            const data = {
+                currentStep,
+                selectedEntry,
+                originalThought: document.getElementById('originalThought').value,
+                assemblage: document.getElementById('assemblage').value,
+                multiplicities: document.getElementById('multiplicities').value,
+                linesOfFlight: document.getElementById('linesOfFlight').value,
+                intensityBefore: document.getElementById('intensityBefore').value,
+                intensityAfter: document.getElementById('intensityAfter').value
+            };
+            
+            localStorage.setItem('rhizomeData', JSON.stringify(data));
+            showSaveIndicator();
+        }
+
+        // The function now accepts 'buttonElement' as an argument
+        function saveJourney(buttonElement) {
+            // Disable the button immediately on click
+            if (buttonElement) {
+                buttonElement.disabled = true;
+            }
+
+            const journeys = JSON.parse(localStorage.getItem('rhizomeJourneys') || '[]');
+            const newJourney = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                entryType: selectedEntry,
+                originalThought: document.getElementById('originalThought').value,
+                assemblage: document.getElementById('assemblage').value,
+                multiplicities: document.getElementById('multiplicities').value,
+                linesOfFlight: document.getElementById('linesOfFlight').value,
+                intensityBefore: parseInt(document.getElementById('intensityBefore').value),
+                intensityAfter: parseInt(document.getElementById('intensityAfter').value)
+            };
+            
+            journeys.push(newJourney);
+            localStorage.setItem('rhizomeJourneys', JSON.stringify(journeys));
+            
+            // Show confirmation
+            const indicator = document.getElementById('saveIndicator');
+            indicator.textContent = 'Journey saved!';
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+                indicator.textContent = 'Progress saved'; // Reset text for other saves
+                // Re-enable the button after the notification is gone
+                if (buttonElement) {
+                    buttonElement.disabled = false;
+                }
+            }, 3000);
+        }
+
+        function loadJourneyHistory() {
+            const journeys = JSON.parse(localStorage.getItem('rhizomeJourneys') || '[]');
+            const historyContainer = document.getElementById('journeyHistory');
+            
+            if (journeys.length === 0) {
+                historyContainer.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">No journeys yet. Complete your first journey to see it here.</p>';
+                return;
+            }
+            
+            historyContainer.innerHTML = journeys.map(journey => `
+                <div class="history-item" onclick="viewJourney(${journey.id})">
+                    <div class="history-date">${journey.date} • ${journey.entryType}</div>
+                    <div class="history-thought">${journey.originalThought.substring(0, 100)}${journey.originalThought.length > 100 ? '...' : ''}</div>
+                </div>
+            `).reverse().join('');
+        }
+
+        function viewJourney(id) {
+            const journeys = JSON.parse(localStorage.getItem('rhizomeJourneys') || '[]');
+            const journey = journeys.find(j => j.id === id);
+            if (!journey) return;
+            
+            // Populate synthesis view with selected journey
+            document.getElementById('finalOriginalThought').textContent = journey.originalThought;
+            document.getElementById('finalAssemblage').textContent = journey.assemblage;
+            document.getElementById('finalMultiplicities').textContent = journey.multiplicities;
+            document.getElementById('finalLinesOfFlight').textContent = journey.linesOfFlight;
+            
+            document.getElementById('synthesisButtons').style.display = 'none';
+            const historyButtons = document.getElementById('historyViewButtons');
+            historyButtons.innerHTML = `<button class="nav-button" onclick="showStep(6)">Back to History</button>`;
+            historyButtons.style.display = 'block';
+            // Show synthesis step
+            currentStep = 5;
+            showStep(5);
+        }
+
+        // Load saved data
+        function loadSavedData() {
+            try {
+                const saved = localStorage.getItem('rhizomeData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    currentStep = data.currentStep || 0;
+                    selectedEntry = data.selectedEntry || '';
+                    document.getElementById('originalThought').value = data.originalThought || '';
+                    document.getElementById('assemblage').value = data.assemblage || '';
+                    document.getElementById('multiplicities').value = data.multiplicities || '';
+                    document.getElementById('linesOfFlight').value = data.linesOfFlight || '';
+                    document.getElementById('intensityBefore').value = data.intensityBefore || 5;
+                    document.getElementById('intensityAfter').value = data.intensityAfter || 5;
+                    showStep(currentStep);
+                    
+                    // Restore entry selection if available
+                    if (selectedEntry) {
+                        const entryCards = document.querySelectorAll('.entry-card');
+                        entryCards.forEach(card => {
+                            if (card.onclick.toString().includes(selectedEntry)) {
+                                card.classList.add('selected');
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.log('No saved data found');
+            }
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+        function updateProgress() {
+            const progress = (currentStep / (totalSteps - 1)) * 100;
+            document.getElementById('progressFill').style.width = `${Math.min(progress, 100)}%`;
+        }
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            
+            // Show current step
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            // Update progress
+            updateProgress();
+
+            // Update display content for step 2
+            if (step === 2) {
+                const originalThought = document.getElementById('originalThought').value;
+                document.getElementById('thoughtDisplay').textContent = originalThought;
+            }
+            
+            // Update synthesis for step 5
+            if (step === 5) {
+                // Check if we are coming from a normal flow (not from viewJourney)
+                // If the history buttons are visible, it means we are in history-view mode.
+                if (document.getElementById('historyViewButtons').style.display !== 'block') {
+                    document.getElementById('synthesisButtons').style.display = 'block';
+                    document.getElementById('historyViewButtons').style.display = 'none';
+                    updateSynthesis();
+                }
+            }
+            
+            // Load journey history for step 6
+            if (step === 6) {
+                loadJourneyHistory();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                if (currentStep === 5) { // Add this check
+                    celebrateCompletion();   // Add this line
+                }
+                showStep(currentStep);
+                saveData();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+                saveData();
+            }
+        }
+
+        function updateSynthesis() {
+            document.getElementById('finalOriginalThought').textContent = 
+                document.getElementById('originalThought').value;
+            document.getElementById('finalAssemblage').textContent = 
+                document.getElementById('assemblage').value;
+            document.getElementById('finalMultiplicities').textContent = 
+                document.getElementById('multiplicities').value;
+            document.getElementById('finalLinesOfFlight').textContent = 
+                document.getElementById('linesOfFlight').value;
+        }
+
+        function startOver() {
+            currentStep = 0;
+            selectedEntry = '';
+            document.getElementById('originalThought').value = '';
+            document.getElementById('assemblage').value = '';
+            document.getElementById('multiplicities').value = '';
+            document.getElementById('linesOfFlight').value = '';
+            document.getElementById('intensityBefore').value = 5;
+            document.getElementById('intensityAfter').value = 5;
+            document.querySelectorAll('.entry-card').forEach(card => card.classList.remove('selected'));
+            localStorage.removeItem('rhizomeData');
+            showStep(0);
+            updateButtonStates();
+        }
+
+        function exportJourney() {
+            const intensityChange = parseInt(document.getElementById('intensityAfter').value) - parseInt(document.getElementById('intensityBefore').value);
+            const changeText = intensityChange < 0 ? `decreased by ${Math.abs(intensityChange)}` : 
+                              intensityChange > 0 ? `increased by ${intensityChange}` : 'remained the same';
+            
+            const journey = {
+                entryType: selectedEntry,
+                originalThought: document.getElementById('originalThought').value,
+                assemblage: document.getElementById('assemblage').value,
+                multiplicities: document.getElementById('multiplicities').value,
+                linesOfFlight: document.getElementById('linesOfFlight').value,
+                intensityBefore: document.getElementById('intensityBefore').value,
+                intensityAfter: document.getElementById('intensityAfter').value,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            const text = `PROJECT RHIZOME JOURNEY - ${journey.date}
+Entry Type: ${journey.entryType}
+
+ORIGINAL STARTING POINT:
+${journey.originalThought}
+
+ASSEMBLAGE (Multiple Functions):
+${journey.assemblage}
+
+MULTIPLICITIES (Paradoxes Explored):
+${journey.multiplicities}
+
+LINES OF FLIGHT (New Possibilities):
+${journey.linesOfFlight}
+
+INTENSITY TRACKING:
+Before: ${journey.intensityBefore}/10
+After: ${journey.intensityAfter}/10
+Change: Intensity ${changeText}
+
+---
+Generated by Project Rhizome - A tool for cognitive flexibility`;
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rhizome-journey-${journey.date}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearHistory() {
+            // 1. Ask for confirmation - this is the most important step.
+            const confirmation = confirm("Are you sure you want to permanently delete all journey history? This action cannot be undone.");
+
+            // 2. If user cancels, stop the function.
+            if (!confirmation) {
+                return;
+            }
+
+            // 3. If user confirms, remove the data from localStorage.
+            localStorage.removeItem('rhizomeJourneys');
+
+            // 4. Refresh the history display on the page.
+            loadJourneyHistory();
+
+            // 5. Briefly show a confirmation message using the existing indicator.
+            const indicator = document.getElementById('saveIndicator');
+            indicator.textContent = 'Journey history cleared.';
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+                // Reset the indicator's text for its normal use
+                indicator.textContent = 'Progress saved';
+            }, 3000);
+        }
+
+        function exportAllJourneys() {
+            const journeys = JSON.parse(localStorage.getItem('rhizomeJourneys') || '[]');
+            if (journeys.length === 0) {
+                alert('No journeys to export yet.');
+                return;
+            }
+            
+            let allText = 'PROJECT RHIZOME - COMPLETE JOURNEY HISTORY\n';
+            allText += '=' + '='.repeat(50) + '\n\n';
+            
+            journeys.forEach((journey, index) => {
+                const intensityChange = journey.intensityAfter - journey.intensityBefore;
+                const changeText = intensityChange < 0 ? `decreased by ${Math.abs(intensityChange)}` : 
+                                  intensityChange > 0 ? `increased by ${intensityChange}` : 'remained the same';
+                
+                allText += `JOURNEY ${index + 1} - ${journey.date}\n`;
+                allText += `Entry Type: ${journey.entryType}\n`;
+                allText += '-'.repeat(30) + '\n\n';
+                allText += `ORIGINAL STARTING POINT:\n${journey.originalThought}\n\n`;
+                allText += `ASSEMBLAGE (Multiple Functions):\n${journey.assemblage}\n\n`;
+                allText += `MULTIPLICITIES (Paradoxes Explored):\n${journey.multiplicities}\n\n`;
+                allText += `LINES OF FLIGHT (New Possibilities):\n${journey.linesOfFlight}\n\n`;
+                allText += `INTENSITY: ${journey.intensityBefore}/10 → ${journey.intensityAfter}/10 (${changeText})\n\n`;
+                allText += '='.repeat(60) + '\n\n';
+            });
+            
+            allText += 'Generated by Project Rhizome - A tool for cognitive flexibility';
+            
+            const blob = new Blob([allText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rhizome-all-journeys-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function adjustFontSize() {
+            fontSize = fontSize === 1 ? 1.2 : fontSize === 1.2 ? 1.4 : 1;
+            document.body.style.fontSize = fontSize + 'em';
+        }
+
+        function viewHistory() {
+            currentStep = 6;
+            showStep(6);
+        }
+
+        function updateButtonStates() {
+            // Step 0 button (entry selection)
+            const step0Button = document.getElementById('step0Button');
+            if (step0Button) {
+                step0Button.disabled = !selectedEntry;
+            }
+
+            // Step 1 button
+            const step1Button = document.getElementById('step1Button');
+            if (step1Button) {
+                const originalThought = document.getElementById('originalThought').value.trim();
+                step1Button.disabled = originalThought.length < 10;
+            }
+
+            // Step 2 button
+            const step2Button = document.getElementById('step2Button');
+            if (step2Button) {
+                const assemblage = document.getElementById('assemblage').value.trim();
+                step2Button.disabled = assemblage.length < 10;
+            }
+
+            // Step 3 button
+            const step3Button = document.getElementById('step3Button');
+            if (step3Button) {
+                const multiplicities = document.getElementById('multiplicities').value.trim();
+                step3Button.disabled = multiplicities.length < 10;
+            }
+
+            // Step 4 button
+            const step4Button = document.getElementById('step4Button');
+            if (step4Button) {
+                const linesOfFlight = document.getElementById('linesOfFlight').value.trim();
+                step4Button.disabled = linesOfFlight.length < 10;
+            }
+        }
+
+        // Add event listeners for auto-save and button state updates
+        document.addEventListener('input', (e) => {
+            if (e.target.tagName === 'TEXTAREA' || e.target.type === 'range') {
+                updateButtonStates();
+                // Auto-save after a delay
+                clearTimeout(window.saveTimeout);
+                window.saveTimeout = setTimeout(saveData, 1000);
+            }
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        const currentStepEl = document.querySelector('.step.active');
+                        const continueBtn = currentStepEl.querySelector('button:not(.nav-button)');
+                        if (continueBtn && !continueBtn.disabled) {
+                            continueBtn.click();
+                        }
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        saveData();
+                        break;
+                }
+            }
+        });
+
+        // Add touch gestures for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                // Swipe left - next step
+                const currentStepEl = document.querySelector('.step.active');
+                const continueBtn = currentStepEl.querySelector('button:not(.nav-button)');
+                if (continueBtn && !continueBtn.disabled) {
+                    continueBtn.click();
+                }
+            }
+            if (touchEndX > touchStartX + 50) {
+                // Swipe right - previous step
+                if (currentStep > 0) {
+                    prevStep();
+                }
+            }
+        }
+
+        // Initialize button states on load
+        setTimeout(updateButtonStates, 100);
+        
+        // Add completion celebration
+        function celebrateCompletion() {
+            if (currentStep === 5) {
+                const container = document.querySelector('.container');
+                container.style.animation = 'pulse 1s ease-in-out';
+                setTimeout(() => {
+                    container.style.animation = '';
+                }, 1000);
+            }
+        }
+
+        // Add pulse animation
+        const celebrationStyle = document.createElement('style');
+        celebrationStyle.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.02); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(celebrationStyle);
+    </script>
+</body>
+</html>
